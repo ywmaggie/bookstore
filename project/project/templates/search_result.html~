@@ -1,0 +1,23 @@
+<html>
+<head>
+    <title>Search Result</title>
+</head>
+<body>
+	{% if books %}
+		<p>Found {{ books|length }} book{{ books|pluralize }}.</p>
+    	<ul>
+        	{% for book in books %}
+        	<li>{{ book.id}} {{ book.ISBN}} {{book.title }} {{ book.author}} {{ book.publisher}} {{ book.retail_price}} {{ book.remain}} </li>
+        	{% endfor %}
+	</ul>
+	</br>
+	<form action="/edit/" method="get">
+    		<input type="submit" value="Edit" />
+   	</form>
+	
+	{% else %}
+    		<p>No books matched your search criteria.</p>
+	{% endif %}
+</body>
+</html>
+

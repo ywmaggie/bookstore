@@ -1,0 +1,7 @@
+from django.contrib import admin
+from bookstore.models import stock_book, import_book, bill
+
+admin.site.register(stock_book)
+admin.site.register(import_book)
+admin.site.register(bill)
+admin.site.register(profile)

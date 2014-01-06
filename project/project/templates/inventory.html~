@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+  {% block title %}
+	<title>Inventory</title>
+  {% endblock %}
+
+  {% block head %}
+  	{% if change %}
+       <h2>{{s}}</h2>
+    {% else %}
+		<h2>Inventory</h2>
+	{% endif %}
+  {% endblock %}
+
+  {% block content %}
+   
+    
+	{% if books %}
+
+		<table frame="above" cellpadding = "5" width = "530" style="word-break:break-all; word-wrap:break-all;" >
+			<tr  style = "font-size:17px">
+			<th width = 30>ID</th>
+			<th width = 50>ISBN</th>
+			<th width = 180>Title</th>
+			<th width = 70>Author</th>
+			<th width = 100>Publisher</th>
+			<th width = 60>Price</th>
+			<th width = 40>No</th>
+			</tr>
+			
+			{% for book in books %}
+        	<tr  style = "font-size:16px">
+			<td align="center">{{ book.id}}</td>
+			<td align="center">{{ book.ISBN}}</td>
+			<td align="center">{{book.title }}</td>
+			<td align="center">{{ book.author}}</td>
+			<td align="center">{{ book.publisher}}</td>
+			<td align="center">{{ book.retail_price}}</td>
+			<td align="center">{{ book.remain}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	
+	{% else %}
+    	<p style = "font-size:17px">No books matched your search criteria.</p>
+	{% endif %}
+  {% endblock %}
+
+  {% block heading1 %}
+	<h3>What to do next?</h3>
+  {% endblock %}
+
+  {% block content1 %}
+  	<div class="rp_pp">
+                <img src="/images/templatemo_image_01.jpg" alt="Image 01" />
+                <a href="/search" style = "font-size:17px">Search </a>
+                <p style = "font-size:12px"></p>
+                <div class="cleaner"></div>
+            </div>
+            <div class="rp_pp">
+                <img src="/images/templatemo_image_02.jpg" alt="Image 02" />
+                <a href="/edit" style = "font-size:17px">Edit </a>
+                <div class="cleaner"></div>
+            </div>
+            <div class="rp_pp">
+                <img src="/images/templatemo_image_03.jpg" alt="Image 03" />
+                <a href="/sell" style = "font-size:17px">Sell</a>
+                <div class="cleaner"></div>
+            </div>
+	
+  {% endblock %}
+
+  

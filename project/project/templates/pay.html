@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+  {% block title %}
+  	{% if check == 0  %}
+		<title>Pay</title>
+	{% elif check == 1 %}
+		<title>Cancel</title>
+	{% else %}
+		<title>Arrive</title>
+	{% endif %}
+  {% endblock %}
+
+  {% block head %}
+  	{% if change %}
+       <h2>{{s}}</h2>
+    {% else %}
+    	{% if check == 2 %}
+    		<h2>Paid orders</h2>
+		{% else %}
+			<h2>Unpaid orders</h2>
+		{% endif %}
+	{% endif %}
+  {% endblock %}
+
+  {% block content %}
+    
+    
+	{% if books %}
+		<table frame="above" cellpadding = "5" width = "530" style="word-break:break-all; word-wrap:break-all;">
+			<tr  style = "font-size:17px">
+			<th width = 80>OrderID</th>
+			<th width = 50>ISBN</th>
+			<th width = 180>Title</th>
+			<th width = 60>Price</th>
+			<th width = 80>Number</th>
+			<th width = 80>Status</th>
+			</tr>
+			
+			{% for book in books %}
+        	<tr  style = "font-size:16px">
+			<td align="center">{{ book.id}}</td>
+			<td align="center">{{ book.ISBN}}</td>
+			<td align="center">{{ book.title }}</td>
+			<td align="center">{{ book.import_price}}</td>
+			<td align="center">{{ book.import_number}}</td>
+			<td align="center">{{ book.get_status_display}}</td>
+			</tr>
+			{% endfor %}
+			
+		</table>
+	{% else %}
+    	<p style = "font-size:17px">No books matched your criteria.</p>
+	{% endif %}
+  {% endblock %}
+
+  {% block heading1 %}
+	{% if check == 0  %}
+		<h3>Pay</h3>
+	{% elif check == 1 %}
+		<h3>Cancel</h3>
+	{% else %}
+		<h3>Arrive</h3>
+	{% endif %}
+  {% endblock %}
+
+  {% block content1 %}
+  	<div class="rp_pp">
+    <form action="" method="get">
+  		<label for="id">Order ID:</label>
+ 		<input type="text" name="id">
+ 		{% if check == 2 %}
+ 			<label for="id">Retail price:</label>
+ 			<input type="text" name="rp">
+		{% endif %}
+		
+		</br></br>
+		{% if check == 0 %}
+			<input type="submit" value="Pay" />
+		{% elif check == 1 %}
+			<input type="submit" value="Cancel" />
+		{% else %}
+			<input type="submit" value="Put into stock" />
+		{% endif %}
+  	  		
+    </form>       
+      <div class="cleaner"></div>
+    </div>
+            
+	
+  {% endblock %}

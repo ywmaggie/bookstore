@@ -1,0 +1,259 @@
+from django.template.loader import get_template
+from django.shortcuts import render_to_response
+from django.http import HttpResponse,Http404,HttpResponseRedirect
+from bookstore.models import *
+from django.contrib import auth
+from django.contrib.auth.models import User
+from django import forms
+from django.template import RequestContext
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
+#登录
+def login(request):
+    path = request.get_full_path()
+    if request.method == 'POST':
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        user = auth.authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return render_to_response('homepage.html',locals(), context_instance=RequestContext(request))
+        else:
+            return render_to_response('login.html', {'errors':'True'},context_instance=RequestContext(request))
+        request.session.modified = True
+  
+  
+    return render_to_response('login.html', context_instance=RequestContext(request))
+
+
+@login_required #只有登录之后才能进行的操作
+def manage(request):#用户修改个人信息
+    user = request.user
+    profile = user.get_profile()
+    change = False
+    gender = profile.gender
+    if gender == 'F':
+    	female = True
+    elif gender == 'M':
+    	male = True
+    if request.method == 'POST':                
+        if  request.POST['name'] != '':     
+            profile.name = request.POST['name']
+        if  request.POST['workID'] != '':
+            profile.workID = request.POST['workID']
+        if  request.POST['gender'] != '':
+            profile.gender = request.POST['gender']
+        if  request.POST['age'] != '':
+            profile.age = int(request.POST['age'])
+        user.save()
+        profile.save()
+        change = True
+        return render_to_response('manage.html',locals(), context_instance=RequestContext(request))             
+    return render_to_response('manage.html',locals(), context_instance=RequestContext(request))
+
+@login_required
+def homepage(request):#主页
+	user = request.user
+	return render_to_response('homepage.html', locals(),context_instance=RequestContext(request))
+	
+@login_required
+def inventory(request):#库存管理首页
+	books = stock_book.objects.all().order_by("id")[0:10]
+	return render_to_response('inventory.html',locals(), context_instance=RequestContext(request))
+
+
+@login_required
+def search(request):#搜索库存
+    
+	change = False
+	if 'id' in request.GET or 't' in request.GET or 'i' in request.GET or 'a' in request.GET or 'p' in request.GET:
+		if request.GET['id'] != '':
+			books = stock_book.objects.filter(id = request.GET['id'])
+		
+		else:
+			books = stock_book.objects.filter(title__icontains=request.GET['t'],ISBN__icontains=request.GET['i'],author__icontains=request.GET['a'],publisher__icontains=request.GET['p']).order_by("id")
+		
+		change = True
+		s = "Search results showed :"
+		return render_to_response('inventory.html',locals(), context_instance=RequestContext(request))
+		
+	else:
+		books = stock_book.objects.all()
+	return render_to_response('search_form.html',locals(), context_instance=RequestContext(request))
+
+@login_required
+def edit(request):#修改库存
+	change = False
+	if 'id' in request.GET :
+		if request.GET['id'] == '':
+			error = True
+			return render_to_response('inventory.html',locals(), context_instance=RequestContext(request))
+		b = stock_book.objects.get(id=request.GET['id'])
+		if not b:
+			error = True
+			return render_to_response('inventory.html',locals(), context_instance=RequestContext(request))	
+		if request.GET['t'] != "":
+			b.title = request.GET['t']  
+		if request.GET['a'] != "":
+			b.author = request.GET['a']
+		if request.GET['p'] != "":
+			b.publisher = request.GET['p']
+		if request.GET['m'] != "": 
+			b.retail_price = request.GET['m']
+		b.save()
+		change = True
+		s = "Edit successfully!"
+		books = stock_book.objects.filter(id=request.GET['id'])
+		return render_to_response('inventory.html',locals(), context_instance=RequestContext(request))
+	else:
+		books = stock_book.objects.all()
+	return render_to_response('edit_form.html',locals(), context_instance=RequestContext(request))
+
+
+@login_required
+def sell(request):#售出库存中的书
+	change = False
+   	if 'id' in request.GET :
+   		if request.GET['id'] == '':
+			error = True
+			return render_to_response('inventory.html',locals(), context_instance=RequestContext(request))
+		b = stock_book.objects.get(id=request.GET['id'])
+		if not b:
+			error = True
+			return render_to_response('inventory.html',locals(), context_instance=RequestContext(request))
+		if not request.GET['n']:
+			s = "Please enter book number!"
+			change = True
+			return render_to_response('inventory.html',locals(), context_instance=RequestContext(request))
+		else :
+			n = request.GET['n']
+			
+		
+		no = int(n)
+		b.remain = b.remain - no
+		if b.remain < 0:
+			change = True
+			s = "Not enough books!"
+			return render_to_response('inventory.html',locals(), context_instance=RequestContext(request))
+		change = True
+		s = "Sell successfully!"
+		b.save()
+		bl=bill(inout='1',date=datetime.datetime.now(),amount=b.retail_price*no)		
+		bl.save()
+		
+		books = stock_book.objects.filter(id=request.GET['id'])
+		return render_to_response('inventory.html',locals(), context_instance=RequestContext(request))
+	else:
+		books = stock_book.objects.all()
+	return render_to_response('sell_form.html',locals(), context_instance=RequestContext(request))
+
+
+
+
+
+
+
+
+
+@login_required
+def buy(request):#进货首页
+	books = import_book.objects.all().order_by("id")[0:10]
+	return render_to_response('buy.html',locals(), context_instance=RequestContext(request))
+
+@login_required
+def buyin(request):#进货
+	change=False
+	if 'id' in request.GET or 't' in request.GET or 'i' in request.GET or 'a' in request.GET or 'p' in request.GET:
+		if request.GET['id'] :
+			b = stock_book.objects.get(id=request.GET['id'])
+			ib = import_book(ISBN=b.ISBN,title=b.title,author=b.author,publisher=b.publisher,status='0')
+		else:
+			ib = import_book(ISBN=request.GET['i'],title = request.GET['t'],author = request.GET['a'],publisher = request.GET['p'])
+		ib.import_price=request.GET['imp']
+		ib.import_number=request.GET['n']
+		ib.save()
+		change = True
+		s="Order added successfully!"
+		books = import_book.objects.all().order_by("id")[0:10]
+		return render_to_response('buy.html',locals(), context_instance=RequestContext(request))
+	else:
+		books = import_book.objects.all().order_by("id")[0:10]
+	return render_to_response('buyin_form.html',locals(), context_instance=RequestContext(request))
+
+@login_required
+def pay(request):#对未付款的书进行付款
+	check = 0
+	change = False
+	if 'id' in request.GET :
+		b = import_book.objects.get(id=request.GET['id'])
+		b.status='1'
+		b.save()
+		bl=bill(inout='0',date=datetime.datetime.now(),amount=b.import_price*b.import_number)		
+		bl.save()
+		change = True
+		s="Paid successfully!"
+		books=import_book.objects.all().order_by("id")[0:10]
+		return render_to_response('buy.html',locals(), context_instance=RequestContext(request))
+	else:
+		books=import_book.objects.filter(status='0').order_by("id")
+	return render_to_response('pay.html',locals(), context_instance=RequestContext(request))
+
+@login_required
+def cancel(request):#取消尚未付款的订单
+	check = 1
+   	change = False
+	if 'id' in request.GET :
+		b = import_book.objects.get(id=request.GET['id'])
+		b.status='2'
+		b.save()
+		change = True
+		s="Cancel successfully!"
+		books=import_book.objects.all().order_by("id")[0:10]
+		return render_to_response('buy.html',locals(), context_instance=RequestContext(request))
+	else:
+		books=import_book.objects.filter(status='0').order_by("id")
+	return render_to_response('pay.html',locals(), context_instance=RequestContext(request))
+
+@login_required
+def add(request):#将到货书添加到库存中
+	check = 2
+	change = False
+   	if 'id' in request.GET :
+		b = import_book.objects.get(id=request.GET['id'])
+		if stock_book.objects.filter(ISBN=b.ISBN).count() > 0:
+			bs=stock_book.objects.get(ISBN=b.ISBN)
+			bs.remain += b.import_number
+		else:
+			bs=stock_book(ISBN=b.ISBN,title=b.title,author=b.author,publisher=b.publisher,retail_price=request.GET['rp'],remain=b.import_number)
+		b.delete()
+		bs.save()
+		change = True
+		s="You have put the books into stock!"
+		books=import_book.objects.all().order_by("id")[0:10]
+   		return render_to_response('buy.html',locals(), context_instance=RequestContext(request))
+   	else:
+		books=import_book.objects.filter(status='1').order_by("id")
+	return render_to_response('pay.html',locals(), context_instance=RequestContext(request))
+
+
+@login_required
+def checkbill(request):#查看一段时间内的账目
+	
+   	if 'start' in request.GET and 'end' in request.GET:
+		s = request.GET['start']
+		e = request.GET['end']		
+		bills = bill.objects.filter(date__gte=s, date__lte=e)
+	else:
+		bills = bill.objects.all()
+	
+	sum_in = 0
+	sum_out = 0
+	for b in bills:
+			if b.inout == '0':
+				sum_out += b.amount
+			elif b.inout == '1':
+				sum_in += b.amount
+	return render_to_response('bill.html',locals(), context_instance=RequestContext(request))
+

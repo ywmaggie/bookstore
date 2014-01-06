@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+  {% block title %}
+	<title>Homepage</title>
+  {% endblock %}
+
+  {% block head %}
+	<h2>Welcome to vv's Book Store!</h2>
+  {% endblock %}
+
+  {% block content %}
+	<p style = "font-size:20px"><em>Hello,{{user.username}}!</em></p>
+	<p style = "font-size:17px">This is vv's book store, and you are the administrator of my book store. You are here to help me manage my book store. </p>
+	<p style = "font-size:17px">You can search the books in this book store and edit them. You can also sell them to customers. </p>
+	<p style = "font-size:17px">When you found the books are not enough, import some. Remember to deal with the orders! Pay it or cancel it.When the books arrive, put the in the stock.  </p>
+	<p style = "font-size:17px">Later, you can check the bills generated during your process of selling and buying.</p>
+	</br></br> 
+	<p style = "font-size:20px"><em>Thanks for your help {{user.username}}! Enjoy your time!</em></p>
+  {% endblock %}
+
+  {% block heading1 %}
+	<h3></h3>
+  {% endblock %}
+
+  {% block content1 %}
+  	<div class="rp_pp">
+                <img src="/images/templatemo_image_01.jpg" alt="Image 01" />
+                <a href="/inventory" style = "font-size:17px">Inventory </a>
+                <p style = "font-size:12px">You can search for books in the stock and edit them. You can also sell them to customers.</p>
+                <div class="cleaner"></div>
+            </div>
+            <div class="rp_pp">
+                <img src="/images/templatemo_image_02.jpg" alt="Image 02" />
+                <a href="/import" style = "font-size:17px">Import Books </a>
+                <p style = "font-size:12px">You can import books and deal with the orders. When the books arrive, you can put them into stock.</p>
+                <div class="cleaner"></div>
+            </div>
+            <div class="rp_pp">
+                <img src="/images/templatemo_image_03.jpg" alt="Image 03" />
+                <a href="/bill" style = "font-size:17px">Check Bill</a>
+                <p style = "font-size:12px">You can check bills during a centain period of time in this book store.</p>
+                <div class="cleaner"></div>
+               </div> 
+	
+  {% endblock %}
+

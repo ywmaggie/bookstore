@@ -1,0 +1,26 @@
+<html>
+<head>
+    <title>Unpaid</title>
+</head>
+<body>
+	{% if books %}
+		<p>Found {{ books|length }} book{{ books|pluralize }}.</p>
+    	<ul>
+        	{% for book in books %}
+        	<li>{{book.id}} {{ book.ISBN}} {{book.title }} {{ book.author}} {{ book.publisher}} {{ book.import_price}} {{ book.import_number}} </li>
+        	{% endfor %}
+	</ul>
+	</br>
+	<form action="/pay/" method="get">
+    		<input type="submit" value="Pay" />
+   	</form>
+	<form action="/cancel/" method="get">
+    		<input type="cancel" value="Cancel" />
+   	</form>
+	
+	{% else %}
+    		<p>No books matched your search criteria.</p>
+	{% endif %}
+</body>
+</html>
+

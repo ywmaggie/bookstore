@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+  {% block title %}
+	<title>User Profile</title>
+  {% endblock %}
+
+  {% block head %}
+	<h2>Hello! {{user.username}}</h2>
+  {% endblock %}
+
+  {% block content %}
+	{% if change %}
+    <p style = "color:red">Change profile succesfully!</p>
+    {% endif %}
+    <form method="post" action="">
+      {% csrf_token %}
+      <table>
+      
+      <tr>
+        <td>name :</td> 
+        <td><input type = "text" action = "" name = name value = "{{profile.name}}" ></td>
+      </tr>  
+      
+      <tr>
+        <td>workID :</td> 
+        <td><input type = "text" action = "" name = workID value = "{{profile.workID}}" ></td>
+      </tr>
+      <tr>
+        <td>gender :</td> 
+        <td>
+        	<input type="radio" name="gender" value = "M" {% if male %}checked{% endif%}/> Male
+        	<input type="radio" name="gender" value = "F" {% if female%}checked{% endif%}/> Female
+        </td>
+      </tr> 
+      <tr>
+        <td>age :</td> 
+        <td><input type = "text" action = "" name = age value = "{{profile.age}}" ></td>
+      </tr> 
+      </table>    
+        <input id="submit" type="submit" value="update" />
+    </form>
+  {% endblock %}
+
+  

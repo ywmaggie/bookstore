@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+  {% block title %}
+	<title>Inventory</title>
+  {% endblock %}
+
+  {% block head %}
+	<h2>Inventory</h2>
+  {% endblock %}
+
+  {% block content %}
+	{% if books %}
+		<table frame="above" cellpadding = "5" width = "530" style="word-break:break-all; word-wrap:break-all;" >
+			<tr  style = "font-size:17px">
+			<th width = 30>ID</th>
+			<th width = 50>ISBN</th>
+			<th width = 180>Title</th>
+			<th width = 70>Author</th>
+			<th width = 100>Publisher</th>
+			<th width = 60>Price</th>
+			<th width = 40>No</th>
+			</tr>
+			
+			{% for book in books %}
+        	<tr  style = "font-size:16px">
+			<td align="center">{{ book.id}}</td>
+			<td align="center">{{ book.ISBN}}</td>
+			<td align="center">{{book.title }}</td>
+			<td align="center">{{ book.author}}</td>
+			<td align="center">{{ book.publisher}}</td>
+			<td align="center">{{ book.retail_price}}</td>
+			<td align="center">{{ book.remain}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+    	<p style = "font-size:17px">No books matched your search criteria.</p>
+	{% endif %}
+  {% endblock %}
+
+  {% block heading1 %}
+	<h3>Search</h3>
+  {% endblock %}
+
+  {% block content1 %}
+  	<div class="rp_pp">
+                <form action="" method="get">
+	<label for="id">Book ID:</label>
+ 	<input type="text" name="id">
+  	<label for="isbn">ISBN:</label>
+ 	<input type="text" name="i">
+	</br>
+	<label for="title">Title:</label>
+ 	<input type="text" name="t">
+	</br>	
+	<label for="author">Author:</label>
+ 	<input type="text" name="a">
+	</br>
+	<label for="publisher">Publisher:</label>
+ 	<input type="text" name="p">
+	</br>
+    <input type="submit" value="Search" />
+    </form>
+                <div class="cleaner"></div>
+            </div>
+	
+
+  {% endblock %}
+
+
+

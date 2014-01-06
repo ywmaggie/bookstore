@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>Unpaid</title>
+</head>
+<body>
+	<p>{{s}}</p>
+	{% if books %}
+		<p>Found {{ books|length }} book{{ books|pluralize }}.</p>
+    	<ul>
+        	{% for book in books %}
+        	<li>{{book.id}} {{ book.ISBN}} {{book.title }} {{ book.author}} {{ book.publisher}} {{ book.import_price}} {{ book.import_number}} </li>
+        	{% endfor %}
+	</ul>
+	</br>
+	<a href="/pay">Pay</a>
+	<a href="/cancel">Cancel</a>
+	<a href="/add">Add into stock</a>
+	
+	{% else %}
+    		<p>No books matched your search criteria.</p>
+	{% endif %}
+</body>
+</html>
+

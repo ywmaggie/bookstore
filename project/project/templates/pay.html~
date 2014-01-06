@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+  {% block title %}
+  	{% if check == 0  %}
+		<title>Pay</title>
+	{% elif check == 1 %}
+		<title>Cancel</title>
+	{% else %}
+		<title>Arrive</title>
+	{% endif %}
+  {% endblock %}
+
+  {% block head %}
+  	{% if change %}
+       <h2>{{s}}</h2>
+    {% else %}
+    	{% if check == 2 %}
+    		<h2>Paid orders</h2>
+		{% else %}
+			<h2>Unpaid orders</h2>
+		{% endif %}
+	{% endif %}
+  {% endblock %}
+
+  {% block content %}
+    
+    
+	{% if books %}
+		<table frame="box" cellpadding = "10">
+			<tr  style = "font-size:17px">
+			<th>Order ID</th>
+			<th>ISBN</th>
+			<th>Title</th>
+			<th>Price</th>
+			<th>Number</th>
+			<th>Status</th>
+			</tr>
+			
+			{% for book in books %}
+        	<tr  style = "font-size:16px">
+			<td>{{ book.id}}</td>
+			<td>{{ book.ISBN}}</td>
+			<td>{{ book.title }}</td>
+			<td>{{ book.import_price}}</td>
+			<td>{{ book.import_number}}</td>
+			<td>{{ book.get_status_display}}</td>
+			</tr>
+			{% endfor %}
+			
+		</table>
+	{% else %}
+    	<p style = "font-size:17px">No books matched your criteria.</p>
+	{% endif %}
+  {% endblock %}
+
+  {% block heading1 %}
+	{% if check == 0  %}
+		<h3>Pay</h3>
+	{% elif check == 1 %}
+		<h3>Cancel</h3>
+	{% else %}
+		<h3>Arrive</h3>
+	{% endif %}
+  {% endblock %}
+
+  {% block content1 %}
+  	<div class="rp_pp">
+    <form action="" method="get">
+  		<label for="id">Order ID:</label>
+ 		<input type="text" name="id">
+ 		{% if check == 2 %}
+ 			<label for="id">Retail price:</label>
+ 			<input type="text" name="rp">
+		{% endif %}
+		
+		</br></br>
+		{% if check == 0 %}
+			<input type="submit" value="Pay" />
+		{% elif check == 1 %}
+			<input type="submit" value="Cancel" />
+		{% else %}
+			<input type="submit" value="Put into stock" />
+		{% endif %}
+  	  		
+    </form>       
+      <div class="cleaner"></div>
+    </div>
+            
+	
+  {% endblock %}
